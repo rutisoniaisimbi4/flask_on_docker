@@ -1,0 +1,5 @@
+.env.prod.db
+.env.prod
+__pycache__
+*.pyc
+.env
