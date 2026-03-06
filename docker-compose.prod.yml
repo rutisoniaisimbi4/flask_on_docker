@@ -1,37 +1,34 @@
-version: '3.8'
-
 services:
   web:
     build:
-      context: ./services/web
+      context: ./app
       dockerfile: Dockerfile.prod
-    command: gunicorn --bind 0.0.0.0:5000 app.main:app
+    command: gunicorn --bind 0.0.0.0:5000 "__init__:create_app()"
     volumes:
-      - static_volume:/usr/src/app/staticfiles
-      - media_volume:/usr/src/app/mediafiles
+      - static_volume:/home/app/static
     expose:
       - 5000
     env_file:
-      - ./.env.prod
+      - .env.prod
     depends_on:
       - db
+
   db:
     image: postgres:15
     volumes:
       - postgres_data_prod:/var/lib/postgresql/data/
     env_file:
-      - ./.env.prod.db
+      - .env.prod.db
+
   nginx:
-    build: ./services/nginx
+    build: ./nginx
     volumes:
-      - static_volume:/usr/src/app/staticfiles
-      - media_volume:/usr/src/app/mediafiles
+      - static_volume:/home/app/static
     ports:
-      - 5010:80
+      - "5101:80"
     depends_on:
       - web
 
 volumes:
   postgres_data_prod:
   static_volume:
-  media_volume:
